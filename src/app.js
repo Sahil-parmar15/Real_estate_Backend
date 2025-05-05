@@ -5,8 +5,11 @@ app.use(cookieParser());
 
 app.use(express.json());
 
-const userRouter = require('./routes/auth.route');
-app.use('/api/v1/auth', userRouter);
+const authRouter = require('./routes/auth.route');
+app.use('/api/v1/auth', authRouter);
+
+const superadminRouter = require('./routes/superadmin.route');
+app.use('/api/v1/superadmin', superadminRouter);
 
 
 app.use((err, req, res, next) => {

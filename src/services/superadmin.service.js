@@ -7,3 +7,27 @@ exports.getAllOrganizationsService = async () => {
   });
   return companies;
 };
+
+exports.updateCompanyStatus = async (id, status) => {
+  const company = await Organization.findByPk(id);
+
+  if(!company) {
+      return null;
+  }
+
+  company.status = status;
+  await company.save();
+
+  return company;
+}
+
+exports.deleteCompany = async (id) => {
+  const company = await Organization.findByPk(id);
+
+  if(!company){
+      return null;
+  }
+
+  await company.destroy();
+  return company;
+}
