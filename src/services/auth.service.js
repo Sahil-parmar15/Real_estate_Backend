@@ -85,17 +85,22 @@ exports.registerOrganizationService = async (req) => {
 exports.loginService = async ({ email, Username, password }) => {
   const user = await User.findOne({
     where: {
-      [Op.or]: [{ email: email } || { username: Username }],
+      [Op.or]: [
+        { email: email },
+        { username: Username }],
     },
+    attributes: ['id', 'email', 'org_id', 'password']
   });
 
   if (!user) throw createError(401, "User not found");
+
+  // console.log("User org_id:", user.org_id);
 
   const validPassword = await bcrypt.compare(password, user.password);
   if (!validPassword) throw createError(401, "Invalid password");
 
   const accessToken = jwt.sign(
-    { id: user.id, email: user.email },
+    { id: user.id, email: user.email, org_id: user.org_id },
     process.env.ACCESS_TOKEN_SECRET,
     { expiresIn: "24h" }
   );
@@ -252,4 +257,32 @@ exports.verifyOtpAndRegister = async (req) => {
     userId: user.id,
     email: user.email,
   };
+};
+
+exports.acceptInvitationService = async ({ token, username, password, profile_picture }) => {
+  let payload;
+  try {
+    payload = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (err) {
+    throw new Error("Invalid or expired token");
+  }
+
+  const { email, org_id, role } = payload;
+
+  const existingUser = await User.findOne({ where: { email } });
+  if (existingUser) throw new Error("User already exists with this email");
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const user = await User.create({
+    username,
+    email,
+    password: hashedPassword,
+    profile_picture,
+    role,
+    org_id,
+    status: "Active",
+  });
+
+  return { userId: user.id, email: user.email };
 };

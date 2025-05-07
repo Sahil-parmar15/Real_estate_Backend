@@ -12,10 +12,9 @@ const { registerOrganization,
         verifyOtp,
         resendOtp,
         verifyOtpAndRegisterOrganization,
+        acceptInvitation
  } = require("../controllers/auth.controller");
 
-
- 
 router.post('/send-org-otp', sendOrgRegistrationOtp);
 router.post("/register", 
   upload.fields([
@@ -33,8 +32,6 @@ router.post('/reset-password', resetPassword);
 router.post('/verify-email', verifyEmail);
 router.post('/verify-otp', verifyOtp);
 router.post('/resend-otp', resendOtp);
-
-
-
+router.post('/accept-invitation', acceptInvitation);
 
 module.exports = router;

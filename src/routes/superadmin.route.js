@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { getAllOrganizations,
         updateCompanyStatus,
-        deleteCompany
+        deleteCompany,
  } = require("../controllers/superadmin.controller");
 
 router.get('/companies', getAllOrganizations);

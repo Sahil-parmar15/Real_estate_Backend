@@ -5,7 +5,8 @@ const { registerOrganizationService,
         resetPasswordService,
         verifyEmailService,
         verifyOtpService,
-        verifyOtpAndRegister
+        verifyOtpAndRegister,
+        acceptInvitationService,
  } = require("../services/auth.service");
 const { sendOtpToEmail } = require("../services/otp.service");
 
@@ -161,6 +162,17 @@ exports.verifyOtpAndRegisterOrganization = async (req, res) => {
   try {
     const result = await verifyOtpAndRegister(req);
     res.status(201).json({ success: true, message: "Organization registered successfully", ...result });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+};
+
+exports.acceptInvitation = async (req, res) => {
+  try {
+    const { token, username, password, full_name } = req.body;
+    const result = await acceptInvitationService({ token, username, password, full_name });
+
+    res.status(201).json({ success: true, message: "User registered successfully", data: result });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
   }
